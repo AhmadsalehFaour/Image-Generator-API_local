@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: image-api
+    ports:
+      - "${HOST_PORT:-7878}:${APP_PORT:-7878}"
+    environment:
+      - API_KEY=${API_KEY}
+
+      - MODEL_DIR=/models
+      - OUTPUT_DIR=/outputs
+
+      - DEVICE=${DEVICE:-cuda}
+      - MAX_WORKERS=${MAX_WORKERS:-1}
+
+      - APP_PORT=${APP_PORT:-7878}
+
+      - DOWNLOAD_MODELS=${DOWNLOAD_MODELS:-0}
+
+      # الأهم: مرّر التوكن بالاسمين لضمان التوافق
+      - HF_TOKEN=${HF_TOKEN}
+      - HUGGINGFACE_HUB_TOKEN=${HF_TOKEN}
+      - HF_HUB_OFFLINE=${HF_HUB_OFFLINE:-0}
+
+      - SD15_REPO=${SD15_REPO:-runwayml/stable-diffusion-v1-5}
+      - SD15_DIR=${SD15_DIR:-/models/sd15}
+      - FLUX_REPO=${FLUX_REPO:-black-forest-labs/FLUX.1-schnell}
+      - FLUX_DIR=${FLUX_DIR:-/models/flux-schnell}
+
+    volumes:
+      - ./models:/models
+      - ./outputs:/outputs
+
+    gpus: all
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${APP_PORT:-7878}/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    # لو تحب: استخدم env_file لضمان تحميل .env
+    # env_file: 
+    #   - ./.env

@@ -1,0 +1,25 @@
+# Ignore models directory (large model files)
+models/
+models/*
+
+# Ignore outputs (generated images)
+outputs/
+outputs/*
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment
+.venv/
+env/
+venv/
+
+# Ignore environment files
+.env
+*.env
+
+# Ignore logs
+*.log
